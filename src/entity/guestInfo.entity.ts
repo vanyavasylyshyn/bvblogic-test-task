@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-
+import { BookingEntity } from './booking.entity';
 
 @Entity('guestInfo')
 export class GuestInfoEntity {
@@ -15,6 +15,7 @@ export class GuestInfoEntity {
   @Column({ nullable: false, length: 15 })
   phonenumber: string;
 
-  
+  @OneToMany(type => BookingEntity, booking => booking.guestInfo)
+  booking: BookingEntity;
 
 }
