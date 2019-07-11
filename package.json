@@ -1,0 +1,32 @@
+{
+  "name": "bvblogic-test-task",
+  "version": "1.0.0",
+  "description": "Nest.js + TypeORM + MySQL server",
+  "license": "MIT",
+  "author": "Ivan Vasylyshyn",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "start": "ts-node src/main",
+    "prestart:prod": "npm run build",
+    "start:prod": "node dist/main.js"
+  },
+  "dependencies": {
+    "@nestjs/common": "6.4.0",
+    "@nestjs/core": "6.4.0",
+    "@nestjs/platform-express": "6.4.0",
+    "@nestjs/typeorm": "6.1.2",
+    "moment": "^2.24.0",
+    "mongodb": "^3.2.7",
+    "multer": "^1.4.1",
+    "mysql": "2.17.1",
+    "reflect-metadata": "0.1.13",
+    "rxjs": "6.5.2",
+    "typeorm": "0.2.18",
+    "typescript": "3.5.2"
+  },
+  "devDependencies": {
+    "@types/node": "7.10.6",
+    "ts-node": "^8.3.0",
+    "tslint": "5.18.0"
+  }
+}
