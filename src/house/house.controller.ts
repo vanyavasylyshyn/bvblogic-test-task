@@ -6,8 +6,10 @@ import { extname } from 'path';
 import { HouseService } from './house.service';
 
 import { createHouseDto } from './dto/createHouse.dto';
+import { findByPeriodsDto } from './dto/findByPeriods.dto';
 
 import { HouseEntity } from '../entity/houseInfo.entity';
+
 
 
 
@@ -40,7 +42,7 @@ export class HouseController {
     {
       storage: diskStorage({
         destination: './houseImages',
-        filename: (req ,file, cb) => {
+        filename: (req, file, cb) => {
           const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('');
           return cb(null, `${randomName}${extname(file.originalname)}`);
         }
@@ -49,13 +51,18 @@ export class HouseController {
   )
   )
   async uploadHouseImage(@Param() params, @UploadedFile() file): Promise<any> {
-    return await this.houseService.setHouseImage(params.houseId,`${file.path}`);
+    return await this.houseService.setHouseImage(params.houseId, `${file.path}`);
   }
 
 
   @Get('houseImages/:fileId')
   async serveHouseImage(@Param() params, @Res() res): Promise<any> {
-    return await res.sendFile(params.fileId, {root: 'houseImages'});
+    return await res.sendFile(params.fileId, { root: 'houseImages' });
   }
-  
+
+  @Post('find')
+  async findByPeriods(@Body() findByPeriods: findByPeriodsDto): Promise<HouseEntity[]> {
+    return await this.houseService.findByPeriods(findByPeriods);
+  }
+
 }

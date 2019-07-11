@@ -8,7 +8,11 @@ import { BlockedEntity } from '../entity/blocked.entity';
 import { BookingEntity } from '../entity/booking.entity';
 
 import { createHouseDto } from './dto/createHouse.dto';
+import { findByPeriodsDto } from './dto/findByPeriods.dto';
 
+import * as moment from 'moment';
+
+const { getWeekdays, checkMinDuration, checkPriceLimit, arrayUnique } = require('./house.helper');
 
 
 @Injectable()
@@ -165,5 +169,58 @@ export class HouseService {
   async setHouseImage(id: number, houseImageSrc: string) {
     await this.houseRepository.update(id, { srcImage: houseImageSrc });
   }
-  
+
+
+  //
+  //
+  //find by period
+  //
+  //
+
+  async findByPeriods(dto: findByPeriodsDto): Promise<HouseEntity[]> {
+
+    let startDate = moment(dto.startingDate);
+    let finishDate = moment(dto.finishingDate);
+    let daysLangth = finishDate.diff(startDate, 'days');
+
+    let weekdays = await getWeekdays(daysLangth, startDate);
+
+    let notBlocked = await this.houseRepository.query(`SELECT * FROM houseinfo 
+    WHERE id IN 
+      (SELECT houseId FROM blocked 
+    WHERE periodId IN 
+      (SELECT id FROM periods 
+    WHERE 
+      (startingDate AND finishingDate NOT BETWEEN "${dto.startingDate}" AND "${dto.finishingDate}")
+    AND 
+      ("${dto.startingDate}" AND "${dto.finishingDate}" NOT BETWEEN startingDate AND finishingDate) 
+    ))
+    OR id NOT IN 
+      (SELECT houseId FROM blocked)
+    `);
+
+    let notBoocked = await this.houseRepository.query(`SELECT * FROM houseinfo 
+    WHERE id IN 
+      (SELECT houseId FROM booking 
+    WHERE booking.status = false OR periodId IN 
+      (SELECT id FROM periods 
+    WHERE 
+      (startingDate AND finishingDate NOT BETWEEN "${dto.startingDate}" AND "${dto.finishingDate}")
+    AND 
+      ("${dto.startingDate}" AND "${dto.finishingDate}" NOT BETWEEN startingDate AND finishingDate)   
+    ))
+    OR id NOT IN 
+      (SELECT houseId FROM booking)`
+    );
+
+    notBlocked = await checkMinDuration(notBlocked, daysLangth);
+    notBoocked = await checkMinDuration(notBoocked, daysLangth);
+
+    notBlocked = await checkPriceLimit(notBlocked, weekdays, daysLangth, dto.priceLimit);
+    notBoocked = await checkPriceLimit(notBoocked, weekdays, daysLangth, dto.priceLimit);
+
+    let result = await arrayUnique(notBlocked.concat(notBoocked));
+
+    return await result;
+  }
 }
