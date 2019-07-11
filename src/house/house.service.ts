@@ -89,5 +89,38 @@ export class HouseService {
 
     return await house;
   };
+  //
+  //
+  //edit house info
+  //
+  //
 
+  async updateHouseInfo(id: number, dto: createHouseDto): Promise<HouseEntity> {
+
+    let houseInfo = await this.houseRepository.findOne(id);
+
+    if (houseInfo === undefined) {
+
+      const errors = { message: 'Such house id doen\'t exist.' };
+      throw new HttpException({ message: 'Input data validation failed.', errors }, HttpStatus.BAD_REQUEST);
+    }
+
+    houseInfo.name = dto.name || houseInfo.name;
+    houseInfo.description = dto.description || houseInfo.description;
+    houseInfo.minDuration = dto.minDuration || houseInfo.minDuration;
+    houseInfo.adress = dto.adress || houseInfo.adress;
+    houseInfo.srcImage = dto.srcImage || houseInfo.srcImage;
+    houseInfo.dailyPrice = dto.dailyPrice || houseInfo.dailyPrice;
+    houseInfo.weekendPrice = dto.weekendPrice || houseInfo.weekendPrice;
+    houseInfo.discount = dto.discount || houseInfo.discount;
+
+    let period = await this.periodRepository.query(`SELECT * FROM periods WHERE id IN(SELECT periodId FROM blocked WHERE blocked.houseId = ${id})`);
+
+    period[0].startingDate = dto.blockedStart || period[0].startingDate;
+    period[0].finishingDate = dto.blockedFinish || period[0].finishingDate;
+
+    await this.periodRepository.save(period);
+
+    return await this.houseRepository.save(houseInfo);
+  }
 }

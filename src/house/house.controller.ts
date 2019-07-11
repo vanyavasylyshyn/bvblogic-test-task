@@ -19,5 +19,10 @@ export class HouseController {
   async create(@Body() houseData: createHouseDto): Promise<any> {
     return await this.houseService.create(houseData);
   }
+
+  @Post('updateInfo/:houseId')
+  async updateHouseInfo(@Param() params, @Body() houseData: createHouseDto): Promise<HouseEntity> {
+    return await this.houseService.updateHouseInfo(params.houseId, houseData);
+  }
   
 }
