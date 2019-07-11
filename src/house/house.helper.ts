@@ -1,5 +1,3 @@
-import { Check } from "typeorm";
-
 module.exports = {
   async getWeekdays(daysLangth: number, startDate) {
     let daysOut = daysLangth;
