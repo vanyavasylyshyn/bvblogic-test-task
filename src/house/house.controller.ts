@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
@@ -50,6 +50,12 @@ export class HouseController {
   )
   async uploadHouseImage(@Param() params, @UploadedFile() file): Promise<any> {
     return await this.houseService.setHouseImage(params.houseId,`${file.path}`);
+  }
+
+
+  @Get('houseImages/:fileId')
+  async serveHouseImage(@Param() params, @Res() res): Promise<any> {
+    return await res.sendFile(params.fileId, {root: 'houseImages'});
   }
   
 }
