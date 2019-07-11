@@ -8,13 +8,13 @@
    to create tables in database.
 
 ## Routes
-  POST    /house/create                 - creating house
-  POST    /booking/create/:houseId      - booking house
-  GET     /booking/history/:houseId     - get history of bookings for house
-  GET     /booking/cancel/:bookingId    - cancel booking
-  GET     /house/:houseId               - get house info
-  POST    /house/updateInfo/:houseId    - update house information
-  POST    /house/find                   - find house by period and price limit
-  DELETE  /house/deleteHouse/:houseId   - delete house
-  POST    /house/image/:houseId         - set house image
-  GET     /house/houseImages/:fileId    - get house image
+  POST    /house/create                 - creating house      
+  POST    /booking/create/:houseId      - booking house     
+  GET     /booking/history/:houseId     - get history of bookings for house    
+  GET     /booking/cancel/:bookingId    - cancel booking    
+  GET     /house/:houseId               - get house info    
+  POST    /house/updateInfo/:houseId    - update house information    
+  POST    /house/find                   - find house by period and price limit    
+  DELETE  /house/deleteHouse/:houseId   - delete house    
+  POST    /house/image/:houseId         - set house image    
+  GET     /house/houseImages/:fileId    - get house image    
