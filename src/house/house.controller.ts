@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
 
 import { HouseService } from './house.service';
 
@@ -23,6 +23,11 @@ export class HouseController {
   @Post('updateInfo/:houseId')
   async updateHouseInfo(@Param() params, @Body() houseData: createHouseDto): Promise<HouseEntity> {
     return await this.houseService.updateHouseInfo(params.houseId, houseData);
+  }
+
+  @Delete('deleteHouse/:houseId')
+  async deleteHouse(@Param() params): Promise<any> {
+    this.houseService.deleteHouse(params.houseId);
   }
   
 }

@@ -123,4 +123,36 @@ export class HouseService {
 
     return await this.houseRepository.save(houseInfo);
   }
+
+  //
+  //
+  //delete house
+  //
+  //
+
+  async deleteHouse(id: number): Promise<any> {
+
+    let house = await this.houseRepository.findOne(id);
+
+    if (house === undefined) {
+
+      const errors = { message: 'Such house id doen\'t exist.' };
+      throw new HttpException({ message: 'Input data validation failed.', errors }, HttpStatus.BAD_REQUEST);
+    }
+
+
+    let booking = await this.bookingRepository.findOne({ where: { house: house } });
+    let blocked = await this.blockedRepository.findOne({ where: { house: house } });
+    if (booking !== undefined) {
+      await this.periodRepository.query(`DELETE FROM periods WHERE id IN(SELECT periodId FROM booking WHERE booking.houseId = ${id})`);
+      await this.bookingRepository.delete(booking);
+    }
+
+    if (blocked !== undefined) {
+      await this.periodRepository.query(`DELETE FROM periods WHERE id IN(SELECT periodId FROM blocked WHERE blocked.houseId = ${id})`);
+      await this.blockedRepository.delete(blocked);
+    }
+
+    return await this.houseRepository.delete(id);
+  }
 }
