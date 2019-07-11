@@ -112,4 +112,27 @@ export class BookingService {
     return await this.bookingRepository.save(booking);
   };
 
+  //
+  //
+  //cancel booking
+  //
+  //
+
+  async cancelBooking(id: number) {
+
+    let booking = await this.bookingRepository.findOne(id);
+
+    if (booking === undefined) {
+
+      const errors = { message: 'Such booking id doen\'t exist.' };
+      throw new HttpException({ message: 'Input data validation failed.', errors }, HttpStatus.BAD_REQUEST);
+    }
+
+    booking.status = false;
+    
+    await this.periodRepository.query(`DELETE FROM periods WHERE id IN(SELECT periodId FROM booking WHERE booking.id = ${id})`);
+
+    return await this.bookingRepository.save(booking);
+  }
+
 }
