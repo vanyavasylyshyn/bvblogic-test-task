@@ -135,4 +135,31 @@ export class BookingService {
     return await this.bookingRepository.save(booking);
   }
 
+  //
+  //
+  //get booking history
+  //
+  //
+
+  async getBookingHistory(id: number): Promise<BookingEntity[]> {
+
+    let house = await  this.houseRepository.findOne(id);
+
+    if (house === undefined) {
+
+      const errors = { message: 'Such house id doesn\'t exist.' };
+      throw new HttpException({ message: 'Input data validation failed.', errors }, HttpStatus.BAD_REQUEST);
+    }
+
+    let bookingHistory = await  this.bookingRepository.find({where: {house: house.id}})
+
+    if (bookingHistory.length == 0) {
+
+      const errors = { message: 'There\'s no bookings for this id house.' };
+      throw new HttpException({ message: 'Input data validation failed.', errors }, HttpStatus.BAD_REQUEST);
+    }
+
+    return bookingHistory;
+  }
+
 }

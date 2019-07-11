@@ -22,5 +22,10 @@ export class BookingController {
   async cancelBooking(@Param() params) {
     return await this.bookingService.cancelBooking(params.bookingId);
   }
+
+  @Get('/history/:houseId')
+  async getBookingHistory(@Param() params): Promise<BookingEntity[]> {
+    return this.bookingService.getBookingHistory(params.houseId);
+  }
   
 }
