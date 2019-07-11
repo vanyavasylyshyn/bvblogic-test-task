@@ -1,12 +1,19 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 
 import { HouseService } from './house.service';
 
 import { createHouseDto } from './dto/createHouse.dto';
 
+import { HouseEntity } from '../entity/houseInfo.entity';
+
 @Controller('house')
 export class HouseController {
   constructor(private readonly houseService: HouseService) { }
+
+  @Get(':houseId')
+  async getHouse(@Param() params): Promise<HouseEntity> {
+    return await this.houseService.getHouseInfo(params.houseId);
+  }
 
   @Post('create')
   async create(@Body() houseData: createHouseDto): Promise<any> {

@@ -29,7 +29,7 @@ export class HouseService {
   //Creating house
   //
   //
-  
+
   async create(dto: createHouseDto): Promise<any> {
 
     let house = await this.houseRepository.findOne({
@@ -69,6 +69,25 @@ export class HouseService {
     } else {
       return await this.houseRepository.save(house);
     }
+  };
+
+  //
+  //
+  //get house info
+  //
+  //
+
+  async getHouseInfo(id: number): Promise<HouseEntity> {
+
+    let house = await this.houseRepository.findOne(id);
+
+    if (house === undefined) {
+
+      const errors = { message: 'Such house id doen\'t exist.' };
+      throw new HttpException({ message: 'Input data validation failed.', errors }, HttpStatus.BAD_REQUEST);
+    }
+
+    return await house;
   };
 
 }
