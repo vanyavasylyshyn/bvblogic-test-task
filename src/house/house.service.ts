@@ -155,4 +155,15 @@ export class HouseService {
 
     return await this.houseRepository.delete(id);
   }
+
+  //
+  //
+  //setting house image
+  //
+  //
+
+  async setHouseImage(id: number, houseImageSrc: string) {
+    await this.houseRepository.update(id, { srcImage: houseImageSrc });
+  }
+  
 }

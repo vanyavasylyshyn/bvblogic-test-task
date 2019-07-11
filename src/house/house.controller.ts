@@ -1,10 +1,15 @@
-import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { diskStorage } from 'multer';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { extname } from 'path';
 
 import { HouseService } from './house.service';
 
 import { createHouseDto } from './dto/createHouse.dto';
 
 import { HouseEntity } from '../entity/houseInfo.entity';
+
+
 
 @Controller('house')
 export class HouseController {
@@ -28,6 +33,23 @@ export class HouseController {
   @Delete('deleteHouse/:houseId')
   async deleteHouse(@Param() params): Promise<any> {
     this.houseService.deleteHouse(params.houseId);
+  }
+
+  @Post('image/:houseId')
+  @UseInterceptors(FileInterceptor('file',
+    {
+      storage: diskStorage({
+        destination: './houseImages',
+        filename: (req ,file, cb) => {
+          const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('');
+          return cb(null, `${randomName}${extname(file.originalname)}`);
+        }
+      })
+    }
+  )
+  )
+  async uploadHouseImage(@Param() params, @UploadedFile() file): Promise<any> {
+    return await this.houseService.setHouseImage(params.houseId,`${file.path}`);
   }
   
 }
